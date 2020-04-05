@@ -65,7 +65,8 @@
 					<br>
 					<input 
 						type="number" 
-						id="nbpers" 
+						id="nbpers"
+						min="0" 
 						v-model.trim="$v.recipe.personnes.$model" 
 						placeholder="6" />
 					<div class="error" v-if="!$v.recipe.personnes.required">Nombres de personnes obligatoire.</div>
@@ -77,6 +78,7 @@
 					<input 
 						type="number" 
 						id="time" 
+						min="0" 
 						v-model.trim="$v.recipe.tempsPreparation.$model" 
 						placeholder="20" />
 					<div class="error" v-if="!$v.recipe.tempsPreparation.required">Temps de préparation obligatoire.</div>
@@ -141,7 +143,7 @@
 				</ul>
 				<div class="btn-container" :class="{'form-group--error': errorStep }">
 					<button type="button" class="btn-add" @click="recipe.etapes.push('')">Ajouter une étape</button>
-					<div class="error">Nom de l'ingrédient obligatoire.</div>
+					<div class="error">Remplir le champs étape.</div>
 				</div>
 			</div>
 		</div>
@@ -162,7 +164,7 @@
 </template>
 
 <script>
-import { required, minLength } from 'vuelidate/lib/validators'
+import { required, minLength, minValue } from 'vuelidate/lib/validators'
 
 export default {
 	name: 'Form',
@@ -205,14 +207,17 @@ export default {
 				required
 			},
 			personnes: {
-				required
+				required,
+				minValue: minValue(0)
 			},
 			tempsPreparation: {
-				required
+				required,
+				minValue: minValue(0)
 			}
 		}
 	},
 	computed: {
+		// formater les ingredients au format [['','','']]
 		composants() {
 			const ingredients = this.recipe.ingredients
 			let composants = []
@@ -222,7 +227,8 @@ export default {
 					let composant = []
 					let quantity, mesure
 	
-					// quantity
+					// récupération de la quantité 
+
 					if(element[0].match(/(\d+)/)) {
 						quantity = element[0].match(/(\d+)/)[0]
 					} else if(element[0].match('½')) {
@@ -232,7 +238,8 @@ export default {
 					}
 					composant.push(quantity)
 	
-					// mesure
+					// récupération du type de mesure
+
 					if(element[0].match(/[a-z]+/g)) {
 						mesure = element[0].match(/[a-z]+/g)[0]
 					} else {
@@ -242,25 +249,29 @@ export default {
 	
 					// type
 					composant.push(element[1])
-	
+
+					// ajout du composant dans le tableau de composants
 					composants.push(composant)
 				}
 			} else {
+				// Valeur par defaut pour avoir un champs ingrédient automatiquement
 				composants.push(['','',''])
 			}
-			// const ing = this.recipe.ingredients[1]
 			return composants
 		}
 	},
 	methods: {
+		// ajout d'un champs ingrédient
 		addNewIngredient() {
 			this.composants.push(['','',''])
 			this.updateIngredients()
 		},
+		// supression d'un champs ingrédient
 		removeIngredient(index) {
 			this.composants.splice(index, 1)
 			this.updateIngredients()
 		},
+		// Ajout des composants dans le tableau des ingrédients au bon format
 		updateIngredients() {
 			const composants = this.composants
 			let ingredients =[]
@@ -272,6 +283,7 @@ export default {
 			}
 			this.recipe.ingredients = ingredients
 		},
+		// vérification de la validé des champs des ingrédients
 		invalidIngredients() {
 			const ingr = this.recipe.ingredients
 			for (let i = 0; i < ingr.length; i++) {
@@ -284,6 +296,7 @@ export default {
 			this.errorIngredient = false
 			return false
 		},
+		// vérification de la validé des champs des étapes
 		invalidSteps() {
 			const ingr = this.recipe.etapes
 			for (let i = 0; i < ingr.length; i++) {
@@ -297,7 +310,9 @@ export default {
 			return false
 		},
 		send() {
+			// mise à jour du tableau des ingredients
 			this.updateIngredients()
+			// formater personnes et tempsPreparations de string à number
 			if (this.recipe.personnes) {
 				this.recipe.personnes = Number(this.recipe.personnes)
 			}
@@ -307,6 +322,8 @@ export default {
 			const errorIngredients = this.invalidIngredients()
 			const errorSteps = this.invalidSteps()
 			this.$v.$touch()
+
+			// Vérification de la validité au formulaire
 			if (this.$v.$invalid || errorIngredients || errorSteps) {
 				this.submitStatus = 'ERROR'
 			} else {
@@ -314,6 +331,7 @@ export default {
 				this.submitStatus = 'PENDING'
 				setTimeout(() => {
 					this.submitStatus = 'OK'
+					// envoie des données
 					this.$emit('send', this.recipe)
 				}, 500)
 			}
@@ -341,7 +359,7 @@ export default {
 		position: relative;
 		justify-content: space-between;
 	}
-
+	/* Formulaire du haut */
 	.form-up .up-group {
 		width: 100%;
 		margin-bottom: 15px;
@@ -376,6 +394,8 @@ export default {
 		align-items: center;
 	}
 
+	/* Formuliare du bas */
+
 	.form-below {
 		margin-bottom: 30px;
 	}
@@ -393,6 +413,8 @@ export default {
 	.form-group button {
 		border: 1px solid #000;
 	}
+
+	/* Formulaire ingredients */
 
 	.form-below .form-left ul {
 		padding: 0;
@@ -464,6 +486,8 @@ export default {
 		border-left: 0;
 	}
 
+	/* Formulaire étapes */
+
 	.form-right ul {
 		padding: 0 15px ;
 		margin-bottom: 30px;
@@ -494,6 +518,9 @@ export default {
 		height: 25px;
 		margin-left: 15px;
 	}
+
+	/* Boutons d'ajout d'un champs et de submit */
+
 	.btn-container {
 		width: 100%;
 		text-align: center;
@@ -512,6 +539,8 @@ export default {
 	.actions button:hover {
 		font-weight: bold;
 	}
+
+	/* Formulaire de photo */
 
 	.form-group.photo-container {
 		width: 100%;

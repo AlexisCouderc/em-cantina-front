@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Form from '../components/Form.vue'
+import Form from '../components/Form'
 import recipesServices from '../services/recipesServices.js'
 
 export default {
@@ -20,12 +20,14 @@ export default {
 		Form
 	},
 	methods: {
+		// Envoie de la modification de la recette
 		send(recipe) {
 			console.log("send", recipe)
 			recipesServices.updateRecipe(recipe).then((res) => console.log(res))
 			this.$router.replace("/")
 		}
 	},
+	// Reception des données du serveur pour la recette à modifier
 	created() {
 		recipesServices.getOneRecipe(this.$route.params.id).then((recipe) => {
 			this.recipe = recipe

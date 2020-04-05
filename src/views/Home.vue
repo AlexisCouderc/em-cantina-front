@@ -70,16 +70,20 @@ export default {
 		}
 	},
 	computed: {
+		// filtre des recettes
 		filterList() {
 			return this.recipesList.filter((recipe) => {
 				const onSearch = recipe.titre.toLowerCase()
 				const diff = recipe.niveau.toLowerCase()
 				const nbPers = recipe.personnes
 				const prepTime = recipe.tempsPreparation
+				// retourne faux si le nom ne correspond pas à la recherche
 				if(onSearch.includes(this.search.toLowerCase()) == false){
 					return false
 				}
-				if(this.difficulty && this.difficulty !== 'Toutes'){
+				// Valide toute les recettes si l'option "Toutes" est choisie
+				if(this.difficulty !== 'Toutes'){
+					// retourne faux si la difficulté ne correspond pas
 					if(diff.includes(this.difficulty.toLowerCase()) == false){
 						return false
 					}
@@ -104,6 +108,7 @@ export default {
 		}
 	},
 	methods: {
+		// suppression d'une recette
 		deleteRecipe(recipe) {
 			const index = this.recipesList.indexOf(recipe)
 			console.log(index)
@@ -125,6 +130,7 @@ export default {
 				.catch((err) => console.log(`Ajax error delete : ${err}`))
 			}
 		},
+		// Mettre à zéro le formulaire de filtre
 		resetForm() {
 			this.search = ''
 			this.max = ''
@@ -132,11 +138,13 @@ export default {
 			this.difficulty = 'Toutes'
 			this.time = ''
 		},
+		// afficher ou cacher les filtres
 		showHide() {
 			this.show = !this.show
 			this.btnFilter = this.btnFilter === '+' ? '-' : '+'
 		}
 	},
+	// appelle au serveur pour recevoir toute les recettes
 	created() {
 		recipesServices.getAllRecipes().then((list) => {
 			this.recipesList = list

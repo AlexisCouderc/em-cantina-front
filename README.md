@@ -1,4 +1,4 @@
-# test
+# em-cantina-front
 
 ## Project setup
 ```

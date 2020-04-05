@@ -7,7 +7,7 @@
 					<router-link class="nav-link" to="/">Recettes</router-link>
 				</li>
 				<li>
-					<router-link class="nav-link" to="/add">Ajouter une recette</router-link>
+					<router-link class="nav-link" to="/ajouter">Ajouter une recette</router-link>
 				</li>
 			</ul>
 		</div>

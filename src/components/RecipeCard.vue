@@ -1,6 +1,6 @@
 <template>
 	<article class="recipe-card">
-		<router-link :to="`/recipe/${recipe.id}`" tag="div" class="card-head">
+		<router-link :to="`/recette/${recipe.id}`" tag="div" class="card-head">
 			<figure>
 				<img v-if="recipe.photo" :src="recipe.photo" :alt="`Photo de ${recipe.titre}`">
 				<img v-else src="../assets/default-picture.png" :alt="`Photo de ${recipe.titre}`">
@@ -8,19 +8,9 @@
 			<h2>{{recipe.titre}}</h2>
 		</router-link>
 		<div class="card-body">
-			<div class="card-content">
-				<div class="card-details">
-					<img src="../assets/lightsaber.svg" alt=""><p>{{ upperCaseLevel }}</p>
-				</div>
-				<div class="card-details">
-					<img src="../assets/darth-vader.svg" alt=""><p>{{ people }}</p>
-				</div>
-				<div class="card-details">
-					<img src="../assets/clock.svg" alt=""><p>{{ minToHour }}</p>
-				</div>
-			</div>
+			<IconsFields :niveau="recipe.niveau" :tempsPreparation="recipe.tempsPreparation" :personnes="recipe.personnes" />
 			<div class="button-container">
-				<router-link :to="`/edit/${recipe.id}`" class="btn btn-small">Modifier</router-link>
+				<router-link :to="`/modifier/${recipe.id}`" class="btn btn-small">Modifier</router-link>
 				<button class="btn btn-small" v-confirm="{
 				ok: removeRecipe,
 				cancel: null,
@@ -31,37 +21,20 @@
 </template>
 
 <script>
+import IconsFields from './IconsField'
 export default {
 	name: 'RecipeCard',
+	components: {
+		IconsFields
+	},
 	props:{
 		recipe: {
 			type: Object,
 			required: true
 		}
 	},
-	computed: {
-		upperCaseLevel() {
-			return this.recipe.niveau.charAt(0).toUpperCase() + this.recipe.niveau.substring(1)
-		},
-		minToHour() {
-			let temps = this.recipe.tempsPreparation
-			if (temps >= 60) {
-				let hours = temps /60
-				let rhours = Math.floor(hours)
-				let min = Math.round((hours - rhours) * 60)
-				return rhours + 'h' + min + 'min'
-			}
-			return temps + 'min'
-		},
-		people() {
-			const person = this.recipe.personnes
-			if (person > 1) {
-				return person + ' personnes'
-			}
-			return person + ' personne'
-		}
-	},
 	methods: {
+		// Supression d'une recette
 		removeRecipe() {
 			this.$emit('removeRecipe', this.recipe)
 		}
@@ -69,7 +42,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 	.recipe-card {
 		width: 300px;
 		margin: 10px 0;
@@ -130,18 +103,37 @@ export default {
 		padding: 15px 0;
 	}
 
-	.card-content {
+	.icons-content {
 		display: flex;
 		justify-content: space-around;
 		margin-bottom: 15px;
 	}
 
-	.card-details {
+	.icons-details {
 		display: flex;
 		align-items: center;
 	}
 
-	.card-details img {
+	.icons-details img {
+		width: 25px;
+		margin-right: 5px;
+	}
+
+
+	.icons-field {
+		width: 100%;
+		max-width: 500px;
+		margin: 15px auto;
+		display: flex;
+		justify-content: space-around;
+	}
+
+	.icons-details {
+		display: flex;
+		align-items: center;
+	}
+
+	.icons-details img {
 		width: 25px;
 		margin-right: 5px;
 	}

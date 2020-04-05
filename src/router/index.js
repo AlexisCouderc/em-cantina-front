@@ -14,15 +14,15 @@ Vue.use(VueRouter)
     component: Home
   },
   { 
-	path: '/add', 
+	path: '/ajouter', 
 	component: RecipeAdd 
   },
   { 
-	path: '/edit/:id', 
+	path: '/modifier/:id', 
 	component: RecipeEdit 
   },
   { 
-	path: '/recipe/:id', 
+	path: '/recette/:id', 
 	component: Recipe 
   }
 ]

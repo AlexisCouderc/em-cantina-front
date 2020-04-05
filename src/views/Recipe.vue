@@ -6,17 +6,7 @@
 				<img v-if="recipe.photo" :src="recipe.photo" :alt="`Photo de ${recipe.titre}`">
 				<img v-else src="../assets/default-picture.png" :alt="`Photo de ${recipe.titre}`">
 			</figure>
-			<div class="icons-field">
-				<div class="icons-details">
-					<img src="../assets/lightsaber.svg" alt=""><p>{{ upperCaseLevel }}</p>
-				</div>
-				<div class="icons-details">
-					<img src="../assets/darth-vader.svg" alt=""><p>{{ people }}</p>
-				</div>
-				<div class="icons-details">
-					<img src="../assets/clock.svg" alt=""><p>{{ minToHour }}</p>
-				</div>
-			</div>
+			<IconsFields :niveau="recipe.niveau" :tempsPreparation="recipe.tempsPreparation" :personnes="recipe.personnes" />
 			<div class="description">
 				{{recipe.description}}
 			</div>
@@ -39,7 +29,7 @@
 				</div>
 			</div>
 			<div class="button-container">
-				<router-link :to="`/edit/${recipe.id}`" class="btn btn-small">Modifier</router-link>
+				<router-link :to="`/modifier/${recipe.id}`" class="btn btn-small">Modifier</router-link>
 				<button class="btn btn-small" v-confirm="{
 				ok: deleteRecipe,
 				cancel: null,
@@ -51,34 +41,16 @@
 
 <script>
 import recipesServices from '../services/recipesServices.js'
+import IconsFields from '../components/IconsField'
 
 export default {
 	name: 'Recipe',
+	components: {
+		IconsFields
+	},
 	data() {
 		return {
 			recipe: null
-		}
-	},
-	computed: {
-		upperCaseLevel() {
-			return this.recipe.niveau.charAt(0).toUpperCase() + this.recipe.niveau.substring(1)
-		},
-		minToHour() {
-			let temps = this.recipe.tempsPreparation
-			if (temps >= 60) {
-				let hours = temps /60
-				let rhours = Math.floor(hours)
-				let min = Math.round((hours - rhours) * 60)
-				return rhours + 'h' + min + 'min'
-			}
-			return temps + 'min'
-		},
-		people() {
-			const person = this.recipe.personnes
-			if (person > 1) {
-				return person + ' personnes'
-			}
-			return person + ' personne'
 		}
 	},
 	methods: {
@@ -136,7 +108,7 @@ export default {
 		transition: 0.5s;
 	}
 
-	.icons-field {
+	.icons-content {
 		width: 100%;
 		max-width: 500px;
 		margin: 15px auto;

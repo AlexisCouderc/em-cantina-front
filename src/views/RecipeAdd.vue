@@ -7,7 +7,7 @@
 
 <script>
 import recipesServices from '../services/recipesServices'
-import Form from '../components/Form.vue'
+import Form from '../components/Form'
 
 export default {
 	name: 'RecipeAdd',
@@ -15,6 +15,7 @@ export default {
 		Form
 	},
 	methods: {
+		// Reception des données du serveur pour la recette à modifier
 		send(recipe) {
 			recipesServices.createRecipe(recipe)
 			.then((res) => {
