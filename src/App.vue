@@ -1,32 +1,68 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+	<Navbar />
+	<router-view></router-view>
   </div>
 </template>
 
+<script>
+import Navbar from './components/Navbar.vue'
+
+export default {
+  name: 'App',
+  components: {
+    Navbar
+  }
+}
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+	html,
+	body {
+		margin: 0;
+		padding: 0;
+		background: #FCFAF1;
+	}
+	#app {
+		font-family: Avenir, Helvetica, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		margin-top: 70px;
+		font-size: 14px;
+	}
+	
+	.site_content {
+		position: relative;
+		display: block;
+		max-width: 994px;
+		padding: 15px 15px 0;
+		margin: 0 auto;
+	}
 
-#nav {
-  padding: 30px;
-}
+	h1 {
+		margin: 0 0 15px;
+		padding: 0;
+	}
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+	button,
+	input,
+	select,
+	p, 
+	textarea,
+	label {
+		margin: 0;
+		padding: 0;
+	}
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
+	button:active, 
+	button:focus, 
+	input:active, 
+	input:focus, 
+	select:active, 
+	select:focus,
+	textarea:active, 
+	textarea:focus {
+		box-shadow: none;
+		outline: none;
+	}
 </style>
