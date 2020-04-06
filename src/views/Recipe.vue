@@ -54,29 +54,48 @@ export default {
 		}
 	},
 	methods: {
+		// Mise en forme de l'affiche des ingrédients
 		composant(ingredient) {
 			return ingredient[0] + ' ' + ingredient[1]
 		},
 		deleteRecipe() {
+			// Appel de la méthode axios "DELETE" pour supprimer une recette
 			recipesServices
 			.deleteRecipe(this.recipe.id)
 			.then((res) => {
 				if(res){
-					if (res.data.error && res.data.error == 1){
-						this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement').then(function(dialog) {
-							console.log('Closed', dialog)
-						})
-						console.log('Error: Roll back')
+					// Détecter si il y a une erreur
+					if (res.error && res.error == 1){
+						this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+					} else {
+						this.$router.replace("/")
 					}
 				}
-				this.$router.replace("/")
 			})
-			.catch((err) => console.log(`Ajax error delete ezfz : ${err}`))
+			.catch((err) => {
+				if (err) {
+					this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+				}
+			})
 		}
 	},
+	// Réception des données du serveur pour la recette à afficher
 	created() {
-		recipesServices.getOneRecipe(this.$route.params.id).then((recipe) => {
-			this.recipe = recipe
+		recipesServices
+		.getOneRecipe(this.$route.params.id)
+		.then((recipe) => {
+			// Détecter si il y a une erreur
+			if (recipe.error && recipe.error == 1){
+				this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+			} else {
+				// Récupération des données de la recette
+				this.recipe = recipe
+			}
+		})
+		.catch((err) => {
+			if (err) {
+				this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+			}
 		})
 	},
 }

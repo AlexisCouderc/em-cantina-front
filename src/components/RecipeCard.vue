@@ -22,6 +22,7 @@
 
 <script>
 import IconsFields from './IconsField'
+
 export default {
 	name: 'RecipeCard',
 	components: {
@@ -148,9 +149,9 @@ export default {
 	.button-container button, 
 	.button-container a {
 		text-decoration: none;
-		color: #722769;
+		color: #772769;
 		padding: 3px 6px;
-		border: 1px solid #722769;
+		border: 1px solid #772769;
 		background: #FFF;
 		font-size: 0.9em;
 	}

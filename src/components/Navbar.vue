@@ -92,7 +92,7 @@ export default {
 			top: 0;
 			position: absolute;
 			transition: all 0.3s linear;
-			background: #722769;
+			background: #772769;
 		}
 
 		.nav-link:hover::before {

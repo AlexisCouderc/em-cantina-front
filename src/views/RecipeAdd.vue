@@ -15,12 +15,23 @@ export default {
 		Form
 	},
 	methods: {
-		// Reception des données du serveur pour la recette à modifier
+		// Envoie des données au serveur
 		send(recipe) {
+			// Appel de la méthode Post axios pour créer la recette
 			recipesServices.createRecipe(recipe)
 			.then((res) => {
-				console.log(res)
-				this.$router.replace("/")
+				// Détecter si il y a une erreur
+				if (res.error && res.error == 1){
+					this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+				} else {
+					// redirection vers la page principale
+					this.$router.replace("/")
+				}
+			})
+			.catch((err) => {
+				if (err) {
+					this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+				}
 			})
 		}
 	}

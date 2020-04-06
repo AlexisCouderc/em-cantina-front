@@ -217,7 +217,7 @@ export default {
 		}
 	},
 	computed: {
-		// formater les ingredients au format [['','','']]
+		// formater les ingredients au format [['','','']] [['','']]
 		composants() {
 			const ingredients = this.recipe.ingredients
 			let composants = []
@@ -530,8 +530,8 @@ export default {
 	.actions button {
 		padding: 5px 10px;
 		margin: 0 auto;
-		border: 1px solid #722769;
-		color: #722769;
+		border: 1px solid #772769;
+		color: #772769;
 		font-size: 1em;
 	}
 

@@ -72,65 +72,79 @@ export default {
 	computed: {
 		// filtre des recettes
 		filterList() {
-			return this.recipesList.filter((recipe) => {
-				const onSearch = recipe.titre.toLowerCase()
-				const diff = recipe.niveau.toLowerCase()
-				const nbPers = recipe.personnes
-				const prepTime = recipe.tempsPreparation
-				// retourne faux si le nom ne correspond pas à la recherche
-				if(onSearch.includes(this.search.toLowerCase()) == false){
-					return false
-				}
-				// Valide toute les recettes si l'option "Toutes" est choisie
-				if(this.difficulty !== 'Toutes'){
-					// retourne faux si la difficulté ne correspond pas
-					if(diff.includes(this.difficulty.toLowerCase()) == false){
+			if (this.recipesList) {
+				return this.recipesList.filter((recipe) => {
+					const onSearch = recipe.titre.toLowerCase()
+					const diff = recipe.niveau.toLowerCase()
+					const nbPers = recipe.personnes
+					const prepTime = recipe.tempsPreparation
+					// retourne faux si le nom ne correspond pas à la recherche
+					if(onSearch.includes(this.search.toLowerCase()) == false){
 						return false
 					}
-				}
-				if(this.max !== '') {
-					if(nbPers > this.max) {
-						return false
+					// Valide toute les recettes si l'option "Toutes" est choisie
+					if(this.difficulty !== 'Toutes'){
+						// retourne faux si la difficulté ne correspond pas
+						if(diff.includes(this.difficulty.toLowerCase()) == false){
+							return false
+						}
 					}
-				}
-				if(this.min !== '') {
-					if(nbPers < this.min) {
-						return false
+					// Retourne faux si le nombre de personne est supérieur à la recherche
+					if(this.max !== '') {
+						if(nbPers > this.max) {
+							return false
+						}
 					}
-				}
-				if(this.time !== '') {
-					if(prepTime > this.time) {
-						return false
+					// Retourne faux si le nombre de personne est inférieur à la recherche
+					if(this.min !== '') {
+						if(nbPers < this.min) {
+							return false
+						}
 					}
-				}
-				return true
-			})
+					// Retourne faux si le nombre de personne est supérieur à la recherche
+					if(this.time !== '') {
+						if(prepTime > this.time) {
+							return false
+						}
+					}
+					return true
+				})
+			}
+			else {
+				return null
+			}
 		}
 	},
 	methods: {
 		// suppression d'une recette
 		deleteRecipe(recipe) {
 			const index = this.recipesList.indexOf(recipe)
-			console.log(index)
 			if (index > -1){
+				// Recette à supprimer et suppression de la recette de la liste local
 				const deleted_recipe = this.recipesList.splice(index , 1)
+				// Appel de la méthode axios "DELETE" pour supprimer une recette
 				recipesServices
 				.deleteRecipe(recipe.id)
 				.then((res) => {
 					if(res){
-						if (res.data.error && res.data.error == 1){
-							this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement').then(function(dialog) {
-								console.log('Closed', dialog)
-							})
-							console.log('Error: Roll back')
+						// Détecter si il y a une erreur
+						if (res.error && res.error == 1){
+							this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+							// Remettre la recette supprimée dans la liste local
 							this.recipesList.splice(index,0, deleted_recipe.pop())
 						}
 					}
 				})
-				.catch((err) => console.log(`Ajax error delete : ${err}`))
+				.catch((err) => {
+					if (err) {
+						this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+						// Remettre la recette supprimée dans la liste local
+						this.recipesList.splice(index,0, deleted_recipe.pop())
+					}
+				})
 			}
 		},
-		// Mettre à zéro le formulaire de filtre
+		// Réinitialiser le formulaire de filtre
 		resetForm() {
 			this.search = ''
 			this.max = ''
@@ -138,7 +152,7 @@ export default {
 			this.difficulty = 'Toutes'
 			this.time = ''
 		},
-		// afficher ou cacher les filtres
+		// Afficher ou cacher les filtres et modification du bouton
 		showHide() {
 			this.show = !this.show
 			this.btnFilter = this.btnFilter === '+' ? '-' : '+'
@@ -146,8 +160,22 @@ export default {
 	},
 	// appelle au serveur pour recevoir toute les recettes
 	created() {
-		recipesServices.getAllRecipes().then((list) => {
-			this.recipesList = list
+		recipesServices.getAllRecipes()
+		.then((list) => {
+			if(list){
+				// Détecter si il y a une erreur
+				if (list.error && list.error == 1){
+					this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+				} else {
+					//ajout de la liste de recette dans la liste local
+					this.recipesList = list
+				}
+			}
+		})
+		.catch((err) => {
+			if (err) {
+				this.$dialog.alert('Erreur serveur : Veuillez refaire l\'opération ultérieurement')
+			}
 		})
 	}
 }
@@ -276,12 +304,21 @@ export default {
 		padding: 2px 10px;
 	}
 
+	/* Bouton de reset des filtres */
+
 	.reset {
-		border: 1px solid #000;
+		border: 1px solid #772769;
+		color: #772769;
 		padding: 3px 10px;
 		font-size: 1em;
 		background: #fff;
 	}
+
+	.reset:hover {
+		font-weight: bold;
+	}
+
+	/* List des recettes */
 
 	.recipe-list {
 		display: flex;
@@ -289,6 +326,8 @@ export default {
 		justify-content: space-around;
 		padding: 20px 0 ;
 	}
+
+	/* media queries */
 
 	@media (min-width: 1024px) {
 		.form-content {
